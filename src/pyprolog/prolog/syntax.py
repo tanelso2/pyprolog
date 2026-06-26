@@ -1,6 +1,7 @@
+from dataclasses import dataclass
 import math
 import re
-from typing import Any
+from typing import Any, Iterable
 
 # Must start with lowercase letter, then can be alphanumeric with underscores
 _VALID_PREDICATE = re.compile(r"^[a-z][A-Za-z0-9_]*$")
@@ -55,3 +56,26 @@ def to_prolog_value(value: Any) -> str:
             raise TypeError(
                 f"Unknown conversion from type {type(value)!r} to Prolog value"
             )
+
+
+@dataclass
+class QueryConversion:
+    new_query: str
+    new_var: str
+
+
+def convert_query(
+    orig: str,
+    orig_var: str,
+    new_var: str,
+    additional_rules: Iterable[str] = [],
+) -> QueryConversion:
+    assert is_valid_variable_name(orig_var)
+    assert is_valid_variable_name(new_var)
+    query = orig
+    assert new_var not in query
+    rules = list(additional_rules)
+    rules.append(orig)
+    new_query = ", ".join(rules)
+    assert new_var in new_query
+    return QueryConversion(new_query=new_query, new_var=new_var)

@@ -5,6 +5,7 @@ import janus_swi as janus
 
 from pyprolog.prolog.facts import PrologFact, all_to_prolog
 from pyprolog.prolog.syntax import (
+    QueryConversion,
     is_valid_predicate_name,
     is_valid_variable_name,
     to_prolog_value,
@@ -47,6 +48,9 @@ class PrologEngine(Protocol):
             case "last":
                 query = f"{relation}({var}, {safe_arg})"
         return self.query_for_variable(query, var)
+
+    def query_converted(self, qc: QueryConversion) -> Iterable[str]:
+        return self.query_for_variable(qc.new_query, qc.new_var)
 
 
 class JanusEngine(PrologEngine):
