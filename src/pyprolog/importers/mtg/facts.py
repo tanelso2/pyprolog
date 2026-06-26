@@ -1,5 +1,10 @@
+import logging
+
 from pyprolog.importers.mtg.scryfall import Card, get_card_data
 from pyprolog.prolog.facts import GeneratedPrologFact, PrologFact, all_to_prolog
+from pyprolog.prolog.engine import JanusEngine
+
+logger = logging.getLogger(__name__)
 
 
 class CardFact(GeneratedPrologFact):
@@ -101,7 +106,26 @@ def card_facts(cards: list[Card]) -> list[PrologFact]:
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
+    logger.info("Loading cards")
     cards = get_card_data()
-    facts = generate_card_facts(cards[0])
-    print(len(facts))
-    print(all_to_prolog(facts))
+
+    logger.info("Generating facts from cards")
+    all_facts = card_facts(cards)
+
+    logger.info("Adding facts to prolog engine")
+    prolog = JanusEngine()
+    prolog.add_facts(all_facts)
+
+    logger.info("Querying prolog engine")
+    results = list(prolog.query_binary_relation("card_color", "B", arg_position="last"))
+    print(f"Found {len(results)} Black cards")
+    results = list(prolog.query_binary_relation("card_color", "U", arg_position="last"))
+    print(f"Found {len(results)} Blue cards")
+    results = list(prolog.query_binary_relation("card_color", "G", arg_position="last"))
+    print(f"Found {len(results)} Green cards")
+    results = list(prolog.query_binary_relation("card_color", "R", arg_position="last"))
+    print(f"Found {len(results)} Red cards")
+    results = list(prolog.query_binary_relation("card_color", "W", arg_position="last"))
+    print(f"Found {len(results)} White cards")

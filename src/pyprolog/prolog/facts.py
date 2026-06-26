@@ -45,7 +45,7 @@ class GeneratedPrologFact(PrologFact):
 
 
 def all_to_prolog(facts: Iterable[PrologFact]) -> str:
-    fact_strs = [x.to_prolog() for x in facts]
+    fact_strs = sorted([x.to_prolog() for x in facts])
     for f in fact_strs:
         if not f.endswith("."):
             raise ValueError(
