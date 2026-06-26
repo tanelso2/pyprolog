@@ -106,7 +106,10 @@ def card_facts(cards: list[Card]) -> list[PrologFact]:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    LOG_FORMAT = (
+        "%(asctime)s|%(levelname)s|%(name)s::%(funcName)s:%(lineno)d|%(message)s"
+    )
+    logging.basicConfig(level=logging.INFO, format=LOG_FORMAT, datefmt=None)
 
     logger.info("Loading cards")
     cards = get_card_data()
